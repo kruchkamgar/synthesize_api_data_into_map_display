@@ -2,7 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import mapboxgl from 'mapbox-gl';
 
-mapboxgl.accessToken = '';
+// Rails.application.credentials.mapbox[:access_token]
+  // https://makandracards.com/makandra/56734-accessing-rails-config-in-webpack-er -- rails erb loader
+mapboxgl.accessToken = ;
 
 class Application extends React.Component {
   constructor(props) {

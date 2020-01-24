@@ -1,7 +1,7 @@
 
 module ReadWeather
 
-  API_ID =  
+  API_ID = Rails.application.credentials.open_weather_map[:api_id]
 
   def weather_data(locations = nil)
     locations

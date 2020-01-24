@@ -1,7 +1,7 @@
 
 module RandomNumbers
 
-  API_KEY = 
+  API_KEY = Rails.application.credentials.random_org[:api_key]
   API_URL = 'https://api.random.org/json-rpc/2/invoke'
   REQ_ID = "22094"
   # data-specific arguments
