@@ -7,8 +7,8 @@ module RandomNumbers
   API_URL = 'https://api.random.org/json-rpc/2/invoke'
   REQ_ID = "22094"
   # data-specific arguments
-  LAT_RANGE = [ -180, 180 ]
-  LON_RANGE = [ -90, 90 ]
+  LAT_RANGE = [ -90, 90 ]
+  LON_RANGE = [ -180, 180 ]
   DECIMAL_PLACES = 6
   BASE = 10
   # ?
