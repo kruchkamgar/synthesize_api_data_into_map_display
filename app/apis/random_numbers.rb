@@ -1,3 +1,5 @@
+require 'uri'
+require 'net/https'
 
 module RandomNumbers
 
@@ -12,35 +14,64 @@ module RandomNumbers
   # ?
   REPLACEMENT = true
 
-  def _coordinates(quantity = 0)
-    # array of results
+  def coordinates_(quantity = 0)
+
+    formed_coordinates = fetch_numbers(quantity)
+    made_coordinates =
+    formed_coordinates
+    .map do |integer_with_decimal|
+      integer_with_decimal.join('').to_f end
+
   end
 
   def fetch_numbers(quantity=0)
-    integers =
-      [ send_post_request(
-          make_integer_req_hash(quantity, ...LAT_RANGE) ),
+
+    integer_responses =
+    Hash[
+      lat:
         send_post_request(
-          make_integer_req_hash(quantity, ...LON_RANGE) ) ]
+          make_integer_req_hash(quantity, *LAT_RANGE) ),
+      lon:
+        send_post_request(
+          make_integer_req_hash(quantity, *LON_RANGE) ) ]
+
+    integers_arrays =
+    Hash[
+      lat:
+        JSON.parse(
+          integer_responses[:lat]
+          .body
+        )["result"]["random"]["data"],
+      lon:
+        JSON.parse(
+          integer_responses[:lon]
+          .body
+        )["result"]["random"]["data"] ]
+
+    integers = integers_arrays[:lat].zip(integers_arrays[:lon]).flatten
 
     decimals =
-      [ send_post_request(
-          make_decimal_req_hash(quantity * 2) ] # two decimals per coordinate (for LAT, LON)
+    JSON.parse(
+      send_post_request(
+        make_decimal_req_hash(quantity.to_i * 2) )
+      .body
+    )["result"]["random"]["data"]  # two decimals per coordinate (for LAT, LON)
 
-    formed_coordinates_data =
-    integers.splice(decimals) # transpose?
+    formed_coordinates =
+    integers.zip(decimals)
 
-    formed_coordinates_data
-    .map do |data|
-      data[:result][:random][:data] end
   end
 
   private
 
   # ///////////// helpers ///////////// #
 
+
   # uri = URI('https://myapp.com/api/v1/resource')
   def send_post_request(req_hash)
+    # retried = false
+    # begin
+
     uri = URI(API_URL)
 
     req =
@@ -51,9 +82,15 @@ module RandomNumbers
 
     res =
     Net::HTTP
-    .start(uri.hostname, uri.port) do |http|
-      http.request(req)
-    end
+    .start(uri.hostname, uri.port, :use_ssl => uri.scheme == 'https', read_timeout: 15) do |http|
+      http.request(req) end
+
+    # rescue Errno::ECONNREFUSED, Net::ReadTimeout => error
+    #   unless retried
+    #     retried = true
+    #     retry
+    #   else error end
+    # end
   end #send_post_request
 
   def make_integer_req_hash (quantity, min, max)
