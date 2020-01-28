@@ -14,17 +14,17 @@ module RandomNumbers
   # ?
   REPLACEMENT = true
 
-  def coordinates_(quantity = 0)
+  # def coordinates_(quantity = 0)
 
-    formed_coordinates = fetch_numbers(quantity)
-    made_coordinates =
-    formed_coordinates
-    .map do |integer_with_decimal|
-      integer_with_decimal.join('').to_f end
+    # formed_coordinates = fetch_numbers(quantity)
+    # made_coordinates =
+    # formed_coordinates
+    # .map do |integer_with_decimal|
+    #   integer_with_decimal.join('').to_f end
 
-  end
+  # end
 
-  def fetch_numbers(quantity=0)
+  def make_coordinates(quantity=0)
 
     integer_responses =
     Hash[
@@ -48,7 +48,7 @@ module RandomNumbers
           .body
         )["result"]["random"]["data"] ]
 
-    integers = integers_arrays[:lat].zip(integers_arrays[:lon]).flatten
+    integer_pairs = integers_arrays[:lat].zip(integers_arrays[:lon])
 
     decimals =
     JSON.parse(
@@ -57,8 +57,12 @@ module RandomNumbers
       .body
     )["result"]["random"]["data"]  # two decimals per coordinate (for LAT, LON)
 
-    formed_coordinates =
-    integers.zip(decimals)
+    made_coordinates =
+    integer_pairs
+    .map do |pair|
+      Hash[
+        lat: pair[0] + decimals.shift.to_f,
+        lon: pair[1] + decimals.shift.to_f ] end
 
   end
 

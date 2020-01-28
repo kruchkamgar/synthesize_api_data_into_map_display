@@ -7,11 +7,12 @@ class MapsController < ApplicationController
   end
 
   def show
-    coordinates = coordinates_(map_params[:quantity])
+    coordinates = make_coordinates(map_params[:quantity])
 
     byebug
     weather = weather_data( coordinates )
 
+    byebug
     render json: coordinates.zip(weather)
 
   end
