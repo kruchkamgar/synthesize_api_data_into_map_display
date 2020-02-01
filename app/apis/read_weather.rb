@@ -6,7 +6,6 @@ module ReadWeather
   def weather_data(coordinates = nil)
     coordinates
     .map do |coordinates|
-      byebug
       data = JSON.parse( RestClient.get( url(coordinates) )) end
   end
 

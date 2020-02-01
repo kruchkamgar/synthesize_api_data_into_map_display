@@ -10,7 +10,7 @@ class MapsController < ApplicationController
     coordinates = make_coordinates(map_params[:quantity])
     weather = weather_data( coordinates )
 
-    render json: coordinates.zip(weather)
+    render json: weather
   end
 
 
